@@ -16,7 +16,7 @@ cook = []
 allobjectid = []
 with open('config.json', 'r', encoding='utf-8') as f:
     conf = json.loads(f.read())
-    print('获取配置成功')
+    print('获取本地配置文件成功')
 
 
 class CxSign():
