@@ -63,8 +63,12 @@ class CxSign():
         url = 'https://passport2-api.chaoxing.com/v11/loginregister'
         data = {'uname': CxSign(num).username, 'code': CxSign(num).passwd, }
         session = requests.session()
-        cookie_jar = session.post(url=url, data=data, headers=headers).cookies
+        postResult = session.post(url=url, data=data, headers=headers)
+        if postResult.text == '{"mes":"参数为空","status":false}':
+            raise "密码错误"
+        cookie_jar = postResult.cookies
         cookie_t = requests.utils.dict_from_cookiejar(cookie_jar)
+        
         cook.append(cookie_t)
         print('用户:',num,'获取cookie成功')
         # return cookie_t
@@ -222,34 +226,14 @@ class CxSign():
             print('已推送')
 
 number = len(conf['username'])
-if __name__ == "__main__":
-    print("运行于普通模式")
+for n in range(number):
+    CxSign.login(n)
+    time.sleep(0.8)
 
-    for n in range(number):
-        CxSign.login(n)
-        time.sleep(0.8)
+for m in range(number):
+    CxSign.subject(m)
+    time.sleep(0.8)
+while 1:
+    for o in range(number):
+        CxSign.taskactivelist(o)
 
-    for m in range(number):
-        CxSign.subject(m)
-        time.sleep(0.8)
-    while 1:
-        for o in range(number):
-            CxSign.taskactivelist(o)
-
-else:
-    print("运行于云函数模式")
-    def main_handler(event, context):
-        for n in range(number):
-            CxSign.login(n)
-            time.sleep(0.5)
-
-        for m in range(number):
-            CxSign.subject(m)
-            time.sleep(0.5)
-
-        for o in range(number):
-            CxSign.taskactivelist(o)
-
-
-    if __name__ == "__main__":
-        main_handler("", "")
