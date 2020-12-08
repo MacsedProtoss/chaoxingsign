@@ -5,7 +5,7 @@ import datetime
 
 session = requests.session()
 headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.108 Safari/537.36'}
+    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.1 Mobile/15E148 Safari/604.1'}
 allsubject = []
 allname = []
 allclassid = []
@@ -102,10 +102,10 @@ class CxSign():
     def taskactivelist(i):  # 查找签到任务
         global a
         aid = []
-        url = "https://mobilelearn.chaoxing.com/ppt/activeAPI/taskactivelist"
+        url = "https://mobilelearn.chaoxing.com/v2/apis/active/student/activelist"
         for index in range(len(allname[i])):
             payload = {'courseId': str(allcourseid[i][index]), 'classId': str(allclassid[i][index]),
-                       'uid': cook[i]['UID']}
+                       'uid': cook[i]['UID'], 'fid': 0} # TBD: fid means what? I don't know!
             time.sleep(1.5)
             print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '用户:', i, '正在查询课程:', allname[i][index])
             res = requests.get(url, params=payload, headers=headers, cookies=cook[i])
@@ -114,8 +114,9 @@ class CxSign():
             if respon == 200:  # 网页状态码正常
                 # print(res.text)
                 data = json.loads(res.text)
+                print(data)
                 # print(data)
-                activeList = data['activeList']  # 把所有任务提出来
+                activeList = data['data']['activeList']  # 把所有任务提出来
                 for item in activeList:  # 轮询所有的任务
                     if ("nameTwo" not in item):
                         continue
